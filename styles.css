@@ -319,19 +319,55 @@ body::before {
 @media (max-width: 768px) {
   body {
     align-items: stretch;
+      overflow: auto;
   }
 
   .page {
-    padding: 18px;
+    padding: 16px 12px 20px;
   }
 
   .card {
     grid-template-columns: minmax(0, 1fr);
-    padding: 22px 18px 18px;
-    gap: 18px;
+    padding: 20px 16px 16px;
+    gap: 16px;
+    border-radius: 22px;
+    box-shadow: 0 18px 50px rgba(15, 23, 42, 0.9);
+  }
+
+  .card__header {
+    align-items: center;
+  }
+
+  .avatar {
+    width: 80px;
+    height: 80px;
+  }
+
+  .title-block__name {
+    font-size: 22px;
+  }
+
+  .title-block__role {
+    font-size: 13px;
+  }
+
+  .typewriter {
+    font-size: 15px;
   }
 
   .card__details {
     order: 3;
+    padding: 14px 12px 12px;
+  }
+
+  .card__footer {
+    gap: 8px;
+  }
+
+  .chip {
+    flex: 1 1 100%;
+    justify-content: center;
+    padding: 8px 14px;
+    font-size: 13px;
   }
 }
