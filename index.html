@@ -51,6 +51,63 @@
           </div>
         </section>
 
+        <section class="card__game" aria-label="Мини игра Змейка" hidden data-secret="snake">
+          <div class="game">
+            <div class="game__header">
+              <div class="game__title">
+                <h2 class="game__h">Змейка</h2>
+                <p class="game__sub">Стрелки / WASD. Пауза: Space.</p>
+              </div>
+
+              <div class="game__stats" aria-label="Статистика">
+                <div class="game__stat">
+                  <span class="game__stat-label">Счёт</span>
+                  <span class="game__stat-value" id="snake-score">0</span>
+                </div>
+                <div class="game__stat">
+                  <span class="game__stat-label">Лучший</span>
+                  <span class="game__stat-value" id="snake-best">0</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="game__body">
+              <div class="game__canvas-wrap">
+                <canvas id="snake-canvas" width="360" height="360" aria-label="Поле игры"></canvas>
+                <div class="game__hint" id="snake-status" aria-live="polite">Нажми «Старт»</div>
+              </div>
+
+              <aside class="game__side">
+                <div class="game__controls" aria-label="Управление">
+                  <label class="game__label" for="snake-name">Имя</label>
+                  <input
+                    class="game__input"
+                    id="snake-name"
+                    type="text"
+                    maxlength="16"
+                    autocomplete="nickname"
+                    placeholder="Player"
+                  />
+
+                  <div class="game__buttons">
+                    <button class="chip" id="snake-start" type="button">Старт</button>
+                    <button class="chip chip--ghost" id="snake-pause" type="button" disabled>Пауза</button>
+                    <button class="chip chip--ghost" id="snake-reset" type="button">Сброс</button>
+                  </div>
+                </div>
+
+                <div class="game__leaderboard" aria-label="Лидерборд">
+                  <div class="game__lb-header">
+                    <h3 class="game__lb-title">Лидерборд</h3>
+                    <button class="chip chip--ghost" id="snake-clear" type="button">Очистить</button>
+                  </div>
+                  <ol class="game__lb-list" id="snake-leaderboard"></ol>
+                </div>
+              </aside>
+            </div>
+          </div>
+        </section>
+
         <footer class="card__footer">
           <a
             class="chip"
