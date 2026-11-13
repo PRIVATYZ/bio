@@ -1,0 +1,252 @@
+<!doctype html>
+<html lang="ru" data-theme="violet">
+  <head>
+    <meta charset="utf-8" />
+    <title>PRIVATYZ — Bio & Dev</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="Personal bio page by PRIVATYZ." />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="ambient-bg" aria-hidden="true">
+      <div class="ambient-orb ambient-orb--1"></div>
+      <div class="ambient-orb ambient-orb--2"></div>
+    </div>
+    <div class="noise" aria-hidden="true"></div>
+
+    <main class="container">
+      <div class="bento-grid" id="bento-grid">
+        <!-- Блок 1: Профиль -->
+        <article class="bento-card bento-card--profile">
+          <div class="profile-top">
+            <div class="avatar" id="secret-trigger-avatar" title="PRIVATYZ">
+              <div class="avatar__glow"></div>
+              <img src="img/image.jpg" alt="Avatar of PRIVATYZ" class="avatar__img" />
+            </div>
+
+            <div class="profile-actions">
+              <button
+                class="status-pill"
+                id="secret-trigger-pill"
+                type="button"
+                aria-label="Status"
+              >
+                <span class="status-pill__dot"></span>
+                <span>online // dev</span>
+              </button>
+
+              <div class="theme-switcher" role="group" aria-label="Выбор темы">
+                <button class="theme-dot is-active" data-set-theme="violet" title="Violet"></button>
+                <button class="theme-dot" data-set-theme="emerald" title="Emerald"></button>
+                <button class="theme-dot" data-set-theme="cyan" title="Cyan"></button>
+                <button class="theme-dot" data-set-theme="crimson" title="Crimson"></button>
+              </div>
+            </div>
+          </div>
+
+          <div class="profile-info">
+            <h1 class="profile-name">PRIVATYZ</h1>
+            <p class="profile-role">Frontend · Lua · Python Developer</p>
+          </div>
+        </article>
+
+        <!-- Блок 2: Локация и фокус -->
+        <article class="bento-card bento-card--meta">
+          <div class="meta-item">
+            <span class="meta-label">LOCATION</span>
+            <span class="meta-value">Горно-Алтайск, RU</span>
+          </div>
+          <div class="meta-divider"></div>
+          <div class="meta-item">
+            <span class="meta-label">STACK & FOCUS</span>
+            <div class="tags">
+              <span class="tag">UI/UX</span>
+              <span class="tag">Motion</span>
+              <span class="tag">Lua</span>
+              <span class="tag">Python</span>
+            </div>
+          </div>
+        </article>
+
+        <!-- Блок 3: Терминал / Typewriter -->
+        <article class="bento-card bento-card--bio">
+          <div class="terminal-bar">
+            <span class="terminal-dot"></span>
+            <span class="terminal-dot"></span>
+            <span class="terminal-dot"></span>
+            <span class="terminal-title">~/privatyz/about.sh</span>
+          </div>
+          <div class="typewriter">
+            <span class="typewriter__prompt">$</span>
+            <span id="typewriter-text"></span>
+            <span class="typewriter__cursor"></span>
+          </div>
+        </article>
+
+        <!-- Блок 4: Соцсети -->
+        <article class="bento-card bento-card--links">
+          <span class="meta-label">CONNECT</span>
+          <div class="social-list">
+            <a class="social-btn" href="https://t.me/privatyzzz" target="_blank" rel="noreferrer">
+              <span class="social-btn__left">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M9.5 14.4 9.2 18a.9.9 0 0 0 .8.9.9.9 0 0 0 .8-.3l2-2.1 3.5 2.6a1.3 1.3 0 0 0 2-.8L21.9 5a1 1 0 0 0-1.3-1.1L3 11.6a1 1 0 0 0 .1 1.9l4.2 1.3 9.3-5.8-7.1 5.4Z" />
+                </svg>
+                <span>Telegram</span>
+              </span>
+              <span class="social-btn__arrow">↗</span>
+            </a>
+
+            <a class="social-btn" href="https://github.com/PRIVATYZ" target="_blank" rel="noreferrer">
+              <span class="social-btn__left">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M12 2C7 2 3 6 3 11c0 4 2.6 7.3 6.2 8.5.5.1.6-.2.6-.4v-1.5c-2.5.6-3-1.1-3-1.1-.4-1-1-1.3-1-1.3-.8-.5.1-.5.1-.5.9.1 1.3.9 1.3.9.8 1.3 2.1.9 2.6.7.1-.6.3-1 .5-1.2-2-.2-4-1-4-4.4 0-1 .4-1.9 1-2.6-.1-.2-.4-1.1.1-2.3 0 0 .8-.3 2.7 1a9 9 0 0 1 5 0c1.9-1.3 2.7-1 2.7-1 .5 1.2.2 2.1.1 2.3.7.7 1 1.6 1 2.6 0 3.4-2.1 4.2-4 4.4.3.2.5.7.5 1.5v2.2c0 .3.1.6.6.4A9 9 0 0 0 21 11c0-5-4-9-9-9Z" />
+                </svg>
+                <span>GitHub</span>
+              </span>
+              <span class="social-btn__arrow">↗</span>
+            </a>
+
+            <a class="social-btn" href="https://steamcommunity.com/id/PRIVATYZZZ/" target="_blank" rel="noreferrer">
+              <span class="social-btn__left">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M5 4a2 2 0 0 0-2 2v12c0 1.1.9 2 2 2h14a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2H5Zm2 2h10v6.9a5 5 0 1 1-10 0V6Zm5 3.2a3.8 3.8 0 0 0-3.8 3.8A3.8 3.8 0 0 0 12 16.8 3.8 3.8 0 0 0 15.8 13 3.8 3.8 0 0 0 12 9.2Z" />
+                </svg>
+                <span>Steam</span>
+              </span>
+              <span class="social-btn__arrow">↗</span>
+            </a>
+          </div>
+        </article>
+
+        <!-- Блок Spotify Live -->
+        <article class="bento-card bento-card--spotify" id="spotify-card">
+          <div class="spotify-header">
+            <div class="spotify-brand">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20Zm4.58 14.42a.62.62 0 0 1-.86.2c-2.35-1.43-5.3-1.76-8.78-.96a.62.62 0 1 1-.28-1.21c3.8-.87 7.07-.5 9.72 1.12.3.18.39.56.2.85Zm1.22-2.72a.78.78 0 0 1-1.07.26c-2.69-1.65-6.79-2.13-9.96-1.17a.78.78 0 1 1-.45-1.49c3.63-1.1 8.15-.57 11.22 1.32.37.23.48.71.26 1.08Zm.1-2.83C14.68 8.95 9.37 8.78 6.3 9.71a.93.93 0 1 1-.54-1.79c3.53-1.07 9.4-.86 13.1 1.33a.93.93 0 0 1-.96 1.62Z"/>
+              </svg>
+              <span>SPOTIFY LIVE</span>
+            </div>
+            <span class="spotify-state" id="spotify-state">OFFLINE</span>
+          </div>
+
+          <a
+            class="spotify-body is-offline"
+            id="spotify-link"
+            href="https://open.spotify.com"
+            target="_blank"
+            rel="noreferrer"
+          >
+            <div class="spotify-cover-wrap">
+              <img
+                class="spotify-cover"
+                id="spotify-cover"
+                src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 80 80'%3E%3Crect width='80' height='80' fill='%23111827'/%3E%3Ccircle cx='40' cy='40' r='18' stroke='%23334155' stroke-width='3' fill='none'/%3E%3Ccircle cx='40' cy='40' r='5' fill='%23334155'/%3E%3C/svg%3E"
+                alt="Album cover"
+              />
+              <div class="eq-bars" id="spotify-eq" aria-hidden="true">
+                <span></span><span></span><span></span>
+              </div>
+            </div>
+
+            <div class="spotify-meta">
+              <div class="spotify-track" id="spotify-track">Ничего не играет</div>
+              <div class="spotify-artist" id="spotify-artist">Spotify в оффлайне</div>
+              <div class="spotify-progress" id="spotify-progress-wrap" hidden>
+                <div class="spotify-progress__bar" id="spotify-progress-bar"></div>
+              </div>
+            </div>
+          </a>
+        </article>
+
+        <!-- Блок 5: Секретная мини-игра -->
+        <article
+          class="bento-card bento-card--game"
+          aria-label="Секретная игра Змейка"
+          hidden
+          data-secret="snake"
+        >
+          <div class="game__header">
+            <div>
+              <div class="game__badge-row">
+                <span class="secret-badge">SECRET MODULE // 0x534E4B</span>
+                <span class="db-badge" id="db-status">DB: Connecting...</span>
+              </div>
+              <h2 class="game__title">Snake.exe</h2>
+            </div>
+
+            <div class="game__header-right">
+              <div class="game__stats">
+                <div class="stat-box">
+                  <span class="stat-box__label">SCORE</span>
+                  <span class="stat-box__val" id="snake-score">0</span>
+                </div>
+                <div class="stat-box">
+                  <span class="stat-box__label">TOP RECORD</span>
+                  <span class="stat-box__val" id="snake-best">0</span>
+                </div>
+              </div>
+              <button class="btn-icon" id="snake-hide" type="button" title="Скрыть модуль">✕</button>
+            </div>
+          </div>
+
+          <div class="game__body">
+            <div class="game__canvas-wrap">
+              <canvas id="snake-canvas" width="380" height="380"></canvas>
+              <div class="game__overlay-hint" id="snake-status">Нажми «Старт» (WASD / Стрелки)</div>
+            </div>
+
+            <div class="game__panel">
+              <div class="panel-box">
+                <div class="input-row">
+                  <div class="field">
+                    <label class="field__label" for="snake-name">NICKNAME</label>
+                    <input
+                      class="field__input"
+                      id="snake-name"
+                      type="text"
+                      maxlength="16"
+                      placeholder="Player"
+                    />
+                  </div>
+                  <div class="field">
+                    <label class="field__label" for="snake-skin">SNAKE SKIN</label>
+                    <select class="field__input" id="snake-skin">
+                      <option value="theme">Theme Accent</option>
+                      <option value="matrix">Matrix Green</option>
+                      <option value="gold">Cyber Gold</option>
+                      <option value="ghost">Stealth Ghost</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div class="btn-group">
+                  <button class="btn btn--primary" id="snake-start" type="button">Старт</button>
+                  <button class="btn btn--ghost" id="snake-pause" type="button" disabled>Пауза</button>
+                  <button class="btn btn--ghost" id="snake-reset" type="button">Сброс</button>
+                </div>
+              </div>
+
+              <div class="panel-box panel-box--lb">
+                <div class="lb-head">
+                  <span class="field__label">GLOBAL LEADERBOARD</span>
+                  <button class="link-btn" id="snake-refresh" type="button">Обновить</button>
+                </div>
+                <ol class="lb-list" id="snake-leaderboard"></ol>
+              </div>
+            </div>
+          </div>
+        </article>
+      </div>
+    </main>
+
+    <script src="main.js"></script>
+  </body>
+</html>
