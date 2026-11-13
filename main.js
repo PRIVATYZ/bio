@@ -1,7 +1,5 @@
 /**
  * КОНФИГУРАЦИЯ БАЗЫ ДАННЫХ (SUPABASE)
- * Оставь пустыми, если используешь локальный режим,
- * или вставь URL и anonKey из Supabase -> Settings -> API:
  */
 const DB_CONFIG = {
   url: "",
@@ -626,7 +624,6 @@ function initSpotifyLive() {
           return;
         }
       } catch {
-        // Переходим к запасному варианту
       }
     }
 
