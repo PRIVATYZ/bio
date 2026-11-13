@@ -585,19 +585,29 @@ function initSpotifyLive() {
   setInterval(tickProgress, 1000);
 
   async function fetchLanyard() {
-    try {
-      const res = await fetch(`https://api.lanyard.rest/v1/users/${DISCORD_ID}?v=${Date.now()}`);
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      const json = await res.json();
-      console.log("[SPOTIFY] Ответ Lanyard:", json);
+    const targetUrl = `https://api.lanyard.rest/v1/users/${DISCORD_ID}?v=${Date.now()}`;
+    const endpoints = [
+      targetUrl,
+      `https://api.allorigins.win/raw?url=${encodeURIComponent(targetUrl)}`
+    ];
 
-      if (json?.success && json?.data) {
-        updateSpotify(json.data);
+    for (const url of endpoints) {
+      try {
+        const res = await fetch(url);
+        if (!res.ok) continue;
+        const json = await res.json();
+        console.log("[SPOTIFY] Ответ Lanyard:", json);
+
+        if (json?.success && json?.data) {
+          updateSpotify(json.data);
+          return;
+        }
+      } catch {
+        // Пробуем следующий резервный маршрут
       }
-    } catch (err) {
-      console.warn("[SPOTIFY] Ошибка доступа к API:", err);
-      setOffline("Нет связи с API (проверь VPN)");
     }
+
+    setOffline("Нет связи с API");
   }
 
   fetchLanyard();
