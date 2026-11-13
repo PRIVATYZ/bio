@@ -496,7 +496,7 @@ function initSnakeGame() {
   renderLeaderboard();
 }
 
-/* ---------------- 6. SPOTIFY LIVE ЧЕРЕЗ LANYARD ---------------- */
+/* ---------------- 6. SPOTIFY LIVE + DISCORD STATUS ЧЕРЕЗ LANYARD ---------------- */
 function initSpotifyLive() {
   const DISCORD_ID = "744792534605365328";
 
@@ -507,6 +507,8 @@ function initSpotifyLive() {
   const artistEl = document.getElementById("spotify-artist");
   const progWrap = document.getElementById("spotify-progress-wrap");
   const progBar = document.getElementById("spotify-progress-bar");
+  const dotEl = document.getElementById("discord-dot");
+  const statusTextEl = document.getElementById("discord-status-text");
 
   if (!stateEl || !linkEl) return;
 
@@ -574,6 +576,25 @@ function initSpotifyLive() {
     tickProgress();
   };
 
+  const updateDiscordStatus = (data) => {
+    if (!dotEl || !statusTextEl || !data) return;
+
+    const status = data.discord_status || "offline";
+    dotEl.setAttribute("data-status", status);
+
+    const appActivity = Array.isArray(data.activities)
+      ? data.activities.find((a) => a.type === 0 && a.name)
+      : null;
+
+    if (status === "offline") {
+      statusTextEl.textContent = "offline // away";
+    } else if (appActivity) {
+      statusTextEl.textContent = `in ${appActivity.name}`;
+    } else {
+      statusTextEl.textContent = `${status} // dev`;
+    }
+  };
+
   const tickProgress = () => {
     if (!timestamps || !timestamps.start || !timestamps.end || !progBar) return;
     const total = timestamps.end - timestamps.start;
@@ -601,6 +622,7 @@ function initSpotifyLive() {
 
         if (json?.success && json?.data) {
           updateSpotify(json.data);
+          updateDiscordStatus(json.data);
           return;
         }
       } catch {

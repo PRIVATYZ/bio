@@ -929,3 +929,28 @@ body {
   border-radius: 999px;
   transition: width 1s linear;
 }
+
+/* Цвета статусов Discord в шапке */
+.status-pill__dot {
+  transition: background 0.3s ease, box-shadow 0.3s ease;
+}
+
+.status-pill__dot[data-status="online"] {
+  background: #22c55e;
+  box-shadow: 0 0 10px #22c55e;
+}
+
+.status-pill__dot[data-status="idle"] {
+  background: #eab308;
+  box-shadow: 0 0 10px #eab308;
+}
+
+.status-pill__dot[data-status="dnd"] {
+  background: #ef4444;
+  box-shadow: 0 0 10px #ef4444;
+}
+
+.status-pill__dot[data-status="offline"] {
+  background: #64748b;
+  box-shadow: none;
+}
