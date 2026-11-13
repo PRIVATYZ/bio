@@ -585,25 +585,27 @@ function initSpotifyLive() {
   setInterval(tickProgress, 1000);
 
   async function fetchLanyard() {
-    const targetUrl = `https://api.lanyard.rest/v1/users/${DISCORD_ID}?v=${Date.now()}`;
-    const endpoints = [
-      targetUrl,
-      `https://api.allorigins.win/raw?url=${encodeURIComponent(targetUrl)}`
-    ];
+    // Вставь сюда URL своей функции из Supabase Edge Functions:
+    const PROXY_URL = "https://vcfqzebfihxdcunsowwu.supabase.co/functions/v1/spotify-proxy";
+    const DIRECT_URL = `https://api.lanyard.rest/v1/users/${DISCORD_ID}?v=${Date.now()}`;
+
+    // Сначала пробуем через наш незаблокированный прокси, затем напрямую (если у юзера есть VPN)
+    const endpoints = PROXY_URL.includes("vcfqzebfihxdcunsowwu")
+      ? [DIRECT_URL]
+      : [`${PROXY_URL}?v=${Date.now()}`, DIRECT_URL];
 
     for (const url of endpoints) {
       try {
         const res = await fetch(url);
         if (!res.ok) continue;
         const json = await res.json();
-        console.log("[SPOTIFY] Ответ Lanyard:", json);
 
         if (json?.success && json?.data) {
           updateSpotify(json.data);
           return;
         }
       } catch {
-        // Пробуем следующий резервный маршрут
+        // Переходим к запасному варианту
       }
     }
 
