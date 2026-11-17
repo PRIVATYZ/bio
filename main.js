@@ -1,15 +1,12 @@
-/**
- * КОНФИГУРАЦИЯ БАЗЫ ДАННЫХ (SUPABASE)
- */
 const DB_CONFIG = {
-  url: "",
-  anonKey: ""
+  url: "https://vcfqzebfihxdcunsowwu.supabase.co",
+  anonKey: "sb_publishable_ifZXCl1lXauq3OPcvdKI_w_zZp7clC_"
 };
 
-/* ---------------- 1. TYPEWRITER ---------------- */
+/* ---------------- 1. TYPEWRITER (BACKSPACE + CTRL+A) ---------------- */
 const phrases = [
   "Приветствую, я PRIVATYZ.",
-  "Создаю минималистичные интерфейсы, скрипты на Lua и утилиты на Python.",
+  "Создаю минималистичные интерфейсы, скрипты на Lua и веб-приложения.",
   "Люблю аккуратный код, плавные анимации и скрытые пасхалки.",
   "Попробуй найти то, что спрятано на этой странице..."
 ];
@@ -17,25 +14,69 @@ const phrases = [
 const el = document.getElementById("typewriter-text");
 let phraseIndex = 0;
 let charIndex = 0;
+let mode = "typing"; // "typing" | "backspace" | "selectAll"
 
 function typeNextChar() {
   if (!el) return;
   const current = phrases[phraseIndex];
 
-  if (charIndex <= current.length) {
-    el.textContent = current.slice(0, charIndex);
-    charIndex += 1;
-    setTimeout(typeNextChar, 38);
-  } else {
-    setTimeout(() => {
+  if (mode === "typing") {
+    el.classList.remove("is-selected");
+    if (charIndex < current.length) {
+      charIndex += 1;
+      el.textContent = current.slice(0, charIndex);
+      const humanDelay = 30 + Math.random() * 25;
+      setTimeout(typeNextChar, humanDelay);
+    } else {
+      setTimeout(() => {
+        mode = Math.random() < 0.25 ? "selectAll" : "backspace";
+        typeNextChar();
+      }, 1500);
+    }
+  } else if (mode === "backspace") {
+    if (charIndex > 0) {
+      charIndex -= 1;
+      el.textContent = current.slice(0, charIndex);
+      setTimeout(typeNextChar, 22);
+    } else {
       phraseIndex = (phraseIndex + 1) % phrases.length;
+      mode = "typing";
+      setTimeout(typeNextChar, 320);
+    }
+  } else if (mode === "selectAll") {
+    el.classList.add("is-selected");
+    setTimeout(() => {
+      el.classList.remove("is-selected");
       charIndex = 0;
-      typeNextChar();
-    }, 1400);
+      el.textContent = "";
+      phraseIndex = (phraseIndex + 1) % phrases.length;
+      mode = "typing";
+      setTimeout(typeNextChar, 350);
+    }, 340);
   }
 }
 
-/* ---------------- 2. КАСТОМИЗАЦИЯ ТЕМ И SPOTLIGHT ---------------- */
+/* ---------------- 2. ЖИВОЕ ВРЕМЯ В ГОРНО-АЛТАЙСКЕ (UTC+7) ---------------- */
+function initLocalClock() {
+  const clockEl = document.getElementById("local-clock");
+  if (!clockEl) return;
+
+  const formatter = new Intl.DateTimeFormat("ru-RU", {
+    timeZone: "Asia/Barnaul",
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit"
+  });
+
+  const tick = () => {
+    clockEl.textContent = formatter.format(new Date());
+  };
+
+  tick();
+  setInterval(tick, 1000);
+}
+
+/* ---------------- 3. КАСТОМИЗАЦИЯ ТЕМ И SPOTLIGHT ---------------- */
 function initCustomization() {
   const THEME_KEY = "privatyz.theme.v2";
   const root = document.documentElement;
@@ -72,7 +113,7 @@ function initCustomization() {
   });
 }
 
-/* ---------------- 3. МНОГОУРОВНЕВАЯ СЕКРЕТНАЯ РАЗБЛОКИРОВКА ---------------- */
+/* ---------------- 4. МНОГОУРОВНЕВАЯ СЕКРЕТНАЯ РАЗБЛОКИРОВКА ---------------- */
 function initSecretReveal() {
   const secretSection = document.querySelector('[data-secret="snake"]');
   const hideBtn = document.getElementById("snake-hide");
@@ -150,7 +191,7 @@ function initSecretReveal() {
   }
 }
 
-/* ---------------- 4. ОБЛАЧНЫЙ ЛИДЕРБОРД (SUPABASE + FALLBACK) ---------------- */
+/* ---------------- 5. ГЛОБАЛЬНЫЙ ЛИДЕРБОРД (SUPABASE + FALLBACK) ---------------- */
 class LeaderboardService {
   constructor(config = {}) {
     this.url = config.url?.replace(/\/$/, "");
@@ -220,7 +261,7 @@ class LeaderboardService {
   }
 }
 
-/* ---------------- 5. ИГРА ЗМЕЙКА ---------------- */
+/* ---------------- 6. ИГРА ЗМЕЙКА ---------------- */
 function initSnakeGame() {
   const canvas = document.getElementById("snake-canvas");
   if (!(canvas instanceof HTMLCanvasElement)) return;
@@ -240,7 +281,7 @@ function initSnakeGame() {
 
   const db = new LeaderboardService(DB_CONFIG);
   if (dbStatusEl) {
-    dbStatusEl.textContent = db.isCloud ? "DB: Supabase Cloud" : "DB: Local Storage";
+    dbStatusEl.textContent = db.isCloud ? "DB: Supabase Global" : "DB: Local Storage";
   }
 
   const SKINS = {
@@ -494,10 +535,11 @@ function initSnakeGame() {
   renderLeaderboard();
 }
 
-/* ---------------- 6. SPOTIFY LIVE + DISCORD STATUS ЧЕРЕЗ LANYARD ---------------- */
+/* ---------------- 7. SPOTIFY LIVE + DISCORD + АДАПТИВНАЯ ПОДСВЕТКА ---------------- */
 function initSpotifyLive() {
   const DISCORD_ID = "744792534605365328";
 
+  const cardEl = document.getElementById("spotify-card");
   const stateEl = document.getElementById("spotify-state");
   const linkEl = document.getElementById("spotify-link");
   const coverEl = document.getElementById("spotify-cover");
@@ -512,14 +554,66 @@ function initSpotifyLive() {
 
   const fallbackCover = coverEl.src;
   let timestamps = null;
+  let lastArtUrl = "";
+
+  // Извлечение доминирующего яркого цвета с обложки альбома
+  const applyCoverGlow = (img) => {
+    if (!cardEl) return;
+    try {
+      const c = document.createElement("canvas");
+      const ctx = c.getContext("2d");
+      c.width = 24;
+      c.height = 24;
+      ctx.drawImage(img, 0, 0, 24, 24);
+      const { data } = ctx.getImageData(0, 0, 24, 24);
+
+      let bestR = 29, bestG = 185, bestB = 84;
+      let bestScore = -1;
+
+      for (let i = 0; i < data.length; i += 4) {
+        const r = data[i];
+        const g = data[i + 1];
+        const b = data[i + 2];
+        const max = Math.max(r, g, b);
+        const min = Math.min(r, g, b);
+        const lum = (max + min) / 2;
+
+        // Отсекаем слишком тёмные и выбеленные пиксели, предпочитая насыщенные
+        if (lum < 38 || lum > 225) continue;
+        const sat = max - min;
+        const score = sat * 1.6 + lum * 0.4;
+
+        if (score > bestScore) {
+          bestScore = score;
+          bestR = r;
+          bestG = g;
+          bestB = b;
+        }
+      }
+
+      cardEl.style.setProperty("--sp-rgb", `${bestR}, ${bestG}, ${bestB}`);
+    } catch {
+      cardEl.style.setProperty("--sp-rgb", "29, 185, 84");
+    }
+  };
+
+  coverEl.addEventListener("load", () => {
+    if (coverEl.src && coverEl.src !== fallbackCover) {
+      applyCoverGlow(coverEl);
+    } else if (cardEl) {
+      cardEl.style.setProperty("--sp-rgb", "29, 185, 84");
+    }
+  });
 
   const setOffline = (reason = "Spotify в оффлайне") => {
     timestamps = null;
+    lastArtUrl = "";
     stateEl.textContent = "OFFLINE";
     stateEl.classList.remove("is-live");
     linkEl.classList.add("is-offline");
     linkEl.href = "https://open.spotify.com";
     coverEl.src = fallbackCover;
+    if (cardEl) cardEl.style.setProperty("--sp-rgb", "29, 185, 84");
     trackEl.textContent = "Ничего не играет";
     artistEl.textContent = reason;
     if (progWrap) progWrap.hidden = true;
@@ -566,7 +660,13 @@ function initSpotifyLive() {
     linkEl.href = track.track_id
       ? `https://open.spotify.com/track/${track.track_id}`
       : "https://open.spotify.com";
-    coverEl.src = track.album_art_url || fallbackCover;
+
+    const nextArt = track.album_art_url || fallbackCover;
+    if (nextArt !== lastArtUrl) {
+      lastArtUrl = nextArt;
+      coverEl.src = nextArt;
+    }
+
     trackEl.textContent = track.song;
     artistEl.textContent = String(track.artist || "").replace(/;/g, ",");
     timestamps = track.timestamps || null;
@@ -637,6 +737,7 @@ function initSpotifyLive() {
 /* ---------------- ИНИЦИАЛИЗАЦИЯ ---------------- */
 window.addEventListener("DOMContentLoaded", () => {
   typeNextChar();
+  initLocalClock();
   initCustomization();
   initSecretReveal();
   initSnakeGame();
