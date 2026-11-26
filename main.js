@@ -535,6 +535,45 @@ function initSnakeGame() {
   renderLeaderboard();
 }
 
+/* Вспомогательная функция: извлечение насыщенного RGB из картинки */
+function extractDominantRgb(img, fallback = "139, 92, 246") {
+  try {
+    const c = document.createElement("canvas");
+    const ctx = c.getContext("2d");
+    c.width = 24;
+    c.height = 24;
+    ctx.drawImage(img, 0, 0, 24, 24);
+    const { data } = ctx.getImageData(0, 0, 24, 24);
+
+    let bestR = null, bestG = 0, bestB = 0;
+    let bestScore = -1;
+
+    for (let i = 0; i < data.length; i += 4) {
+      const r = data[i];
+      const g = data[i + 1];
+      const b = data[i + 2];
+      const max = Math.max(r, g, b);
+      const min = Math.min(r, g, b);
+      const lum = (max + min) / 2;
+
+      if (lum < 38 || lum > 225) continue;
+      const sat = max - min;
+      const score = sat * 1.6 + lum * 0.4;
+
+      if (score > bestScore) {
+        bestScore = score;
+        bestR = r;
+        bestG = g;
+        bestB = b;
+      }
+    }
+
+    return bestR !== null ? `${bestR}, ${bestG}, ${bestB}` : fallback;
+  } catch {
+    return fallback;
+  }
+}
+
 /* ---------------- 7. SPOTIFY LIVE + DISCORD + АДАПТИВНАЯ ПОДСВЕТКА ---------------- */
 function initSpotifyLive() {
   const DISCORD_ID = "744792534605365328";
@@ -556,51 +595,11 @@ function initSpotifyLive() {
   let timestamps = null;
   let lastArtUrl = "";
 
-  // Извлечение доминирующего яркого цвета с обложки альбома
-  const applyCoverGlow = (img) => {
-    if (!cardEl) return;
-    try {
-      const c = document.createElement("canvas");
-      const ctx = c.getContext("2d");
-      c.width = 24;
-      c.height = 24;
-      ctx.drawImage(img, 0, 0, 24, 24);
-      const { data } = ctx.getImageData(0, 0, 24, 24);
-
-      let bestR = 29, bestG = 185, bestB = 84;
-      let bestScore = -1;
-
-      for (let i = 0; i < data.length; i += 4) {
-        const r = data[i];
-        const g = data[i + 1];
-        const b = data[i + 2];
-        const max = Math.max(r, g, b);
-        const min = Math.min(r, g, b);
-        const lum = (max + min) / 2;
-
-        // Отсекаем слишком тёмные и выбеленные пиксели, предпочитая насыщенные
-        if (lum < 38 || lum > 225) continue;
-        const sat = max - min;
-        const score = sat * 1.6 + lum * 0.4;
-
-        if (score > bestScore) {
-          bestScore = score;
-          bestR = r;
-          bestG = g;
-          bestB = b;
-        }
-      }
-
-      cardEl.style.setProperty("--sp-rgb", `${bestR}, ${bestG}, ${bestB}`);
-    } catch {
-      cardEl.style.setProperty("--sp-rgb", "29, 185, 84");
-    }
-  };
-
   coverEl.addEventListener("load", () => {
+    if (!cardEl) return;
     if (coverEl.src && coverEl.src !== fallbackCover) {
-      applyCoverGlow(coverEl);
-    } else if (cardEl) {
+      cardEl.style.setProperty("--sp-rgb", extractDominantRgb(coverEl, "29, 185, 84"));
+    } else {
       cardEl.style.setProperty("--sp-rgb", "29, 185, 84");
     }
   });
@@ -734,6 +733,216 @@ function initSpotifyLive() {
   setInterval(fetchLanyard, 5000);
 }
 
+/* ---------------- 8. РЕЛИЗЫ АРТИСТА (SUPABASE + TG BOT) ---------------- */
+function initReleasesShowcase() {
+  const cardEl = document.getElementById("releases-card");
+  if (!cardEl) return;
+
+  const badgeEl = document.getElementById("release-status-badge");
+  const navEl = document.getElementById("releases-nav");
+  const dotsEl = document.getElementById("releases-dots");
+  const prevBtn = document.getElementById("release-prev");
+  const nextBtn = document.getElementById("release-next");
+  const coverEl = document.getElementById("release-cover");
+  const playBtn = document.getElementById("release-play-btn");
+  const titleEl = document.getElementById("release-title");
+  const metaEl = document.getElementById("release-meta");
+  const countdownEl = document.getElementById("release-countdown");
+  const previewBar = document.getElementById("release-preview-bar");
+  const previewFill = document.getElementById("release-preview-fill");
+  const linksEl = document.getElementById("release-links");
+
+  const fallbackCover = coverEl.src;
+  const audio = new Audio();
+  audio.preload = "metadata";
+
+  let releases = [];
+  let activeIdx = 0;
+
+  const stopAudio = () => {
+    audio.pause();
+    audio.currentTime = 0;
+    if (playBtn) playBtn.textContent = "▶";
+    if (previewBar) previewBar.hidden = true;
+    if (previewFill) previewFill.style.width = "0%";
+  };
+
+  coverEl.addEventListener("load", () => {
+    if (coverEl.src && coverEl.src !== fallbackCover) {
+      cardEl.style.setProperty("--rel-rgb", extractDominantRgb(coverEl, "139, 92, 246"));
+    } else {
+      cardEl.style.setProperty("--rel-rgb", "139, 92, 246");
+    }
+  });
+
+  audio.addEventListener("timeupdate", () => {
+    if (!audio.duration || !previewFill) return;
+    previewFill.style.width = `${Math.min(100, (audio.currentTime / audio.duration) * 100)}%`;
+  });
+
+  audio.addEventListener("ended", () => {
+    if (playBtn) playBtn.textContent = "▶";
+    if (previewFill) previewFill.style.width = "0%";
+  });
+
+  if (playBtn) {
+    playBtn.addEventListener("click", () => {
+      const current = releases[activeIdx];
+      if (!current?.preview_url) return;
+
+      if (!audio.paused && audio.src === current.preview_url) {
+        audio.pause();
+        playBtn.textContent = "▶";
+        return;
+      }
+
+      if (audio.src !== current.preview_url) {
+        audio.src = current.preview_url;
+      }
+      if (previewBar) previewBar.hidden = false;
+      audio.play().catch(() => {});
+      playBtn.textContent = "❚❚";
+    });
+  }
+
+  const updateCountdown = () => {
+    const item = releases[activeIdx];
+    if (!item || !countdownEl || !badgeEl) return;
+
+    // Если дата не указана (прочерк "-" в боте) -> трек в статусе "Скоро / Coming Soon"
+    if (!item.release_date) {
+      badgeEl.textContent = "COMING SOON";
+      badgeEl.classList.remove("is-out");
+      countdownEl.hidden = false;
+      countdownEl.textContent = "Скоро";
+      return;
+    }
+
+    const diff = new Date(item.release_date).getTime() - Date.now();
+    if (diff <= 0) {
+      countdownEl.hidden = true;
+      badgeEl.textContent = "OUT NOW";
+      badgeEl.classList.add("is-out");
+      return;
+    }
+
+    badgeEl.textContent = "UPCOMING";
+    badgeEl.classList.remove("is-out");
+    countdownEl.hidden = false;
+
+    const totalSec = Math.floor(diff / 1000);
+    const days = Math.floor(totalSec / 86400);
+    const hours = Math.floor((totalSec % 86400) / 3600);
+    const mins = Math.floor((totalSec % 3600) / 60);
+    const secs = totalSec % 60;
+
+    countdownEl.textContent = `${String(days).padStart(2, "0")}d : ${String(hours).padStart(2, "0")}h : ${String(mins).padStart(2, "0")}m : ${String(secs).padStart(2, "0")}s`;
+  };
+
+  setInterval(updateCountdown, 1000);
+
+  const renderDots = () => {
+    if (!dotsEl) return;
+    dotsEl.innerHTML = "";
+    releases.forEach((_, idx) => {
+      const dot = document.createElement("span");
+      dot.className = `releases-dot${idx === activeIdx ? " is-active" : ""}`;
+      dotsEl.appendChild(dot);
+    });
+  };
+
+  const renderRelease = () => {
+    const item = releases[activeIdx];
+    if (!item) {
+      titleEl.textContent = "Скоро новые релизы";
+      metaEl.textContent = "PRIVATYZ";
+      if (playBtn) playBtn.hidden = true;
+      if (linksEl) linksEl.innerHTML = "";
+      return;
+    }
+
+    titleEl.textContent = item.title || "Untitled";
+    metaEl.textContent = `${item.artist || "PRIVATYZ"} · ${item.genre || "Ambient"}`;
+    coverEl.src = item.cover_url || fallbackCover;
+
+    if (playBtn) {
+      playBtn.hidden = !item.preview_url;
+    }
+
+    if (linksEl) {
+      linksEl.innerHTML = "";
+      const platforms = [
+        { label: "Яндекс Музыка", url: item.yandex_url },
+        { label: "VK Музыка", url: item.vk_url },
+        { label: "Spotify", url: item.spotify_url }
+      ];
+
+      platforms.forEach((p) => {
+        if (!p.url) return;
+        const a = document.createElement("a");
+        a.className = "stream-pill";
+        a.href = p.url;
+        a.target = "_blank";
+        a.rel = "noreferrer";
+        a.textContent = `${p.label} ↗`;
+        linksEl.appendChild(a);
+      });
+    }
+
+    renderDots();
+    updateCountdown();
+  };
+
+  if (prevBtn) {
+    prevBtn.addEventListener("click", () => {
+      if (!releases.length) return;
+      stopAudio();
+      activeIdx = (activeIdx - 1 + releases.length) % releases.length;
+      renderRelease();
+    });
+  }
+
+  if (nextBtn) {
+    nextBtn.addEventListener("click", () => {
+      if (!releases.length) return;
+      stopAudio();
+      activeIdx = (activeIdx + 1) % releases.length;
+      renderRelease();
+    });
+  }
+
+  async function loadReleases() {
+    if (!DB_CONFIG.url || !DB_CONFIG.anonKey) {
+      renderRelease();
+      return;
+    }
+
+    try {
+      const res = await fetch(
+        `${DB_CONFIG.url.replace(/\/$/, "")}/rest/v1/releases?select=*&order=id.desc`,
+        {
+          headers: {
+            apikey: DB_CONFIG.anonKey,
+            Authorization: `Bearer ${DB_CONFIG.anonKey}`
+          }
+        }
+      );
+      if (!res.ok) throw new Error("Failed to fetch releases");
+      const rows = await res.json();
+      if (Array.isArray(rows) && rows.length) {
+        releases = rows;
+        activeIdx = 0;
+        if (navEl) navEl.hidden = releases.length <= 1;
+      }
+    } catch {
+      // Оставляем заглушку, если таблица ещё не создана
+    }
+    renderRelease();
+  }
+
+  loadReleases();
+}
+
 /* ---------------- ИНИЦИАЛИЗАЦИЯ ---------------- */
 window.addEventListener("DOMContentLoaded", () => {
   typeNextChar();
@@ -742,4 +951,5 @@ window.addEventListener("DOMContentLoaded", () => {
   initSecretReveal();
   initSnakeGame();
   initSpotifyLive();
+  initReleasesShowcase();
 });

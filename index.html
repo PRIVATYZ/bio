@@ -169,6 +169,59 @@
           </a>
         </article>
 
+        <!-- Блок релизов артиста PRIVATYZ(меня) -->
+        <article class="bento-card bento-card--releases" id="releases-card">
+          <div class="releases-header">
+            <div class="releases-title-group">
+              <span class="meta-label">RELEASES // PRIVATYZ</span>
+              <span class="release-badge" id="release-status-badge">UPCOMING</span>
+            </div>
+
+            <div class="releases-nav" id="releases-nav" hidden>
+              <button class="nav-arrow" id="release-prev" type="button" title="Предыдущий трек">‹</button>
+              <div class="releases-dots" id="releases-dots"></div>
+              <button class="nav-arrow" id="release-next" type="button" title="Следующий трек">›</button>
+            </div>
+          </div>
+
+          <div class="release-body" id="release-body">
+            <div class="release-cover-box">
+              <img
+                id="release-cover"
+                class="release-cover"
+                crossorigin="anonymous"
+                src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'%3E%3Crect width='120' height='120' fill='%230b101b'/%3E%3Ccircle cx='60' cy='60' r='28' stroke='%23253047' stroke-width='2' fill='none'/%3E%3Ccircle cx='60' cy='60' r='6' fill='%238b5cf6'/%3E%3C/svg%3E"
+                alt="Release cover"
+              />
+              <button
+                class="play-preview-btn"
+                id="release-play-btn"
+                type="button"
+                title="Слушать превью"
+                hidden
+              >
+                ▶
+              </button>
+            </div>
+
+            <div class="release-info">
+              <div class="release-top-line">
+                <div>
+                  <h2 class="release-title" id="release-title">Загрузка релизов...</h2>
+                  <div class="release-meta" id="release-meta">PRIVATYZ · Ambient</div>
+                </div>
+                <div class="release-countdown" id="release-countdown" hidden></div>
+              </div>
+
+              <div class="release-preview-bar" id="release-preview-bar" hidden>
+                <div class="release-preview-bar__fill" id="release-preview-fill"></div>
+              </div>
+
+              <div class="release-links" id="release-links"></div>
+            </div>
+          </div>
+        </article>
+
         <!-- Блок 5: Секретная мини-игра -->
         <article
           class="bento-card bento-card--game"
